@@ -14,7 +14,7 @@ These notebooks are walkthroughs of that API.
 
 | Path | Role |
 | --- | --- |
-| [quantize_nano_super.ipynb](./quantize_nano_super.ipynb) | Nano and Super video-model quantization. |
+| [quantize_cosmos3.ipynb](./quantize_cosmos3.ipynb) | Edge, Nano, and Super video-model quantization. |
 | [quantize_super_text2image.ipynb](./quantize_super_text2image.ipynb) | Base and distilled Text-to-Image quantization. |
 | [quantize_super_image2video.ipynb](./quantize_super_image2video.ipynb) | Base and distilled Image-to-Video quantization. |
 | [Makefile](./Makefile) | `make help` lists the existing notebook entry points. |
@@ -33,7 +33,7 @@ quantize_fp8_checkpoint(
 ```
 
 `calibration_behavior="framework"` is the default for new checkpoints and is
-explicit in all six notebook calls. It uses the framework sampler and model
+explicit in the notebook calls. It uses the framework sampler and model
 behavior. `calibration_behavior="legacy"` is an opt-in compatibility recipe;
 it is not the normal calibration path in these notebooks.
 
@@ -51,7 +51,7 @@ A16 activation computation does not turn the FP8 checkpoint into a BF16 baseline
 
 Use a Linux machine with an NVIDIA GPU and Hugging Face model access (`uvx hf@latest
 auth login` or `HF_TOKEN`). The notebooks include environment setup instructions
-(**step 3**). The Nano/Super install cell is currently commented out; use the
+(**step 3**). The Edge/Nano/Super install cell is currently commented out; use the
 commands below if you need to create the environment and register its kernel:
 
 ```bash
@@ -79,10 +79,10 @@ By default the notebooks run in **DEMO** mode — one calibration prompt at a sm
 a run takes minutes. Set `DEMO=0` for full calibration (the larger shape and 8
 calibration prompts). See [Demo vs. full runs](#demo-vs-full-runs).
 
-## Quantize Cosmos3-Nano and Cosmos3-Super
+## Quantize Cosmos3-Edge, Cosmos3-Nano, and Cosmos3-Super
 
-Convert the Nano (8B) and Super (32B) checkpoints. Same recipe, different checkpoint —
-Nano first, then Super.
+Convert the base Edge (4B), Nano (8B), and Super (32B) checkpoints with the same recipe.
+The notebook runs Edge first, then Nano and Super.
 
 ### Run
 
@@ -91,13 +91,13 @@ cd cookbooks/cosmos3/quantization
 DEMO=1 "$COSMOS3_QUANTIZE_VENV/bin/jupyter" nbconvert --to notebook --execute --inplace \
   --ExecutePreprocessor.kernel_name=cosmos3-quantize \
   --ExecutePreprocessor.timeout=7200 \
-  quantize_nano_super.ipynb
+  quantize_cosmos3.ipynb
 ```
 
 ### Notebook walkthrough
 
-[`quantize_nano_super.ipynb`](./quantize_nano_super.ipynb) walks
-through prerequisites, environment setup, and then quantizes Nano and Super in separate
+[`quantize_cosmos3.ipynb`](./quantize_cosmos3.ipynb) walks
+through prerequisites, environment setup, and then quantizes Edge, Nano, and Super in separate
 sections, printing a short summary of each FP8 checkpoint it writes.
 
 ## Quantize Cosmos3-Super Text-to-Image (base and distilled)
@@ -184,8 +184,9 @@ Point your serving stack at this directory.
 The FP8 output is a **drop-in checkpoint** — the same layout as the bf16 source, plus an
 `hf_quant_config.json` and a `quantization_config` in `transformer/config.json`. A
 Cosmos3-capable server detects the ModelOpt FP8 format automatically. Serve it from a **local
-directory** — either the output produced above, or the published `nvidia/Cosmos3-Nano-FP8` / `nvidia/Cosmos3-Super-FP8` checkpoint
-downloaded with `snapshot_download` (pass `--served-model-name` so clients see the usual model id):
+directory** — either the output produced above, or a published `nvidia/Cosmos3-Edge-FP8`,
+`nvidia/Cosmos3-Nano-FP8`, or `nvidia/Cosmos3-Super-FP8` checkpoint downloaded with
+`snapshot_download` (pass `--served-model-name` so clients see the usual model id):
 
 ```bash
 # A) the local FP8 output produced above

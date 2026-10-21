@@ -159,7 +159,8 @@ Cosmos 3 is an omnimodal world model built on a unified Mixture-of-Transformers 
         </ul>
         Less memory, higher speed:
         <ul>
-          <li>FP8/NVFP4 (coming soon)</li>
+          <li><a href="https://huggingface.co/nvidia/Cosmos3-Edge-FP8">Cosmos3-Edge-FP8</a></li>
+          <li>NVFP4 (coming soon)</li>
         </ul>
       </td>
     </tr>
